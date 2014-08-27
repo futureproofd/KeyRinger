@@ -55,6 +55,7 @@ public class RingerService extends Service {
 									case 0:
 										myRingerManager.setRingerMode(2);
 									}
+									//removed default - see older version
 							}
 						}catch(Exception e){
 							Log.d(TAG, " exception: " + e + " " + number);
