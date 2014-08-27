@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="to.marcus.keyRinger"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="19" />
+    
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+	<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_action"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="to.marcus.keyRinger.ContactActivity"
+            android:parentActivityName="to.marcus.keyRinger.ContactListActivity"
+            android:label="@string/app_name" >
+             <meta-data android:name="android.support.PARENT_ACTIVITY"
+                  android:value="to.marcus.keyRinger.ContactListActivity"/>
+        </activity>
+        <activity 
+            android:name="to.marcus.keyRinger.ContactListActivity">
+              <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+           	</intent-filter>
+        </activity>
+        
+        <receiver android:name="to.marcus.keyRinger.StartRingerServiceBroadcast">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>    
+        
+        <service
+            android:name="to.marcus.keyRinger.RingerService"
+            android:label="Ringer Service">
+        </service>
+        
+   </application>
+
+</manifest>
