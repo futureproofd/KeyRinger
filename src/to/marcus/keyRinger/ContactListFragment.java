@@ -2,7 +2,7 @@ package to.marcus.keyRinger;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import to.marcus.keyRinger.R;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -39,6 +39,7 @@ public class ContactListFragment extends ListFragment {
 	private static final String TAG = "ContactListFragment";
 	private static final String DIALOG_DATE = "Date";
 	private static final int REQUEST_CONTACT = 1;
+	private long mCurrentTime;
 	
 	@Override 
 	public void onCreate(Bundle savedInstanceState){
@@ -49,7 +50,14 @@ public class ContactListFragment extends ListFragment {
 		mContacts = ContactStorage.get(getActivity()).getContacts();
 		//ready our data-set for the listview
 		ContactAdapter adapter = new ContactAdapter(mContacts);
+		//keep current time up to date
+		Calendar calendar = Calendar.getInstance();
+		mCurrentTime = (long)calendar.getTimeInMillis();
+		SaveSchedulePrefs.saveSchedule(mCurrentTime, 3, getActivity());
+		Log.d(TAG, "intial current time: " + mCurrentTime );
+		
 		setListAdapter(adapter);		
+		
 	}
 
 	//update list changes
