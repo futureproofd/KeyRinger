@@ -53,11 +53,10 @@ public class ContactListFragment extends ListFragment {
 		//keep current time up to date
 		Calendar calendar = Calendar.getInstance();
 		mCurrentTime = (long)calendar.getTimeInMillis();
-		SaveSchedulePrefs.saveSchedule(mCurrentTime, 3, getActivity());
-		Log.d(TAG, "intial current time: " + mCurrentTime );
+		SaveSchedulePrefs.saveSchedule(mCurrentTime, 3, 1, getActivity());
+		//Log.d(TAG, "intial current time: " + mCurrentTime );
 		
 		setListAdapter(adapter);		
-		
 	}
 
 	//update list changes

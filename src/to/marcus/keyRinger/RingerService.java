@@ -76,13 +76,22 @@ public class RingerService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
 		
+		//put version logic here
+		/* if kitcat, 
+		 * listen mPhoneStateListener
+		 * userTouched = false;   //reset our user touch to use continuous 24hr looping
+		 * ServiceController.setServiceAlarm(this);
+		 * 
+		 * 
+		 * */
 		boolean isStop = (intent.getAction().equals("stop")) ? true : false;
-		
+		//stop
 		if (isStop){
 			//stopSelfResult(startId);
 			mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
 			Log.d(TAG, " stopping service from intent action: " + startId + " " + intent + " " + isStop);
-			return START_NOT_STICKY;	
+			return START_STICKY;	
+		//start
 		}else{
 			mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 			Log.d(TAG, " starting service: " + startId + " " + intent + " " + isStop);

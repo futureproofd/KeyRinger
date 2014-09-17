@@ -12,9 +12,9 @@ public class StartRingerServiceBroadcast extends BroadcastReceiver {
 		Calendar calendar = Calendar.getInstance();
 		//get current time to help adjust scheduling times
 		Long mCurrentTime = (long)calendar.getTimeInMillis();
-		SaveSchedulePrefs.saveSchedule(mCurrentTime, 3, context.getApplicationContext());
+		SaveSchedulePrefs.saveSchedule(mCurrentTime, 3, 1, context.getApplicationContext());
 		//start and stop service
-		ServiceController.setServiceAlarm(context.getApplicationContext(), true);
-		ServiceController.setServiceAlarm(context.getApplicationContext(), false);
+		ServiceController.setServiceAlarm(context.getApplicationContext(), true, false);
+		ServiceController.setServiceAlarm(context.getApplicationContext(), false, false);
 	}
 }

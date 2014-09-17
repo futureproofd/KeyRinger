@@ -45,7 +45,7 @@ public class ScheduleFragment extends DialogFragment {
 		
 		//get current time to help adjust scheduling times
 		mCurrentTime = (long)calendar.getTimeInMillis();
-		SaveSchedulePrefs.saveSchedule(mCurrentTime, 3, getActivity());
+		SaveSchedulePrefs.saveSchedule(mCurrentTime, 3, 1, getActivity());
 		
 		//set both start and stop times
 		calendar.setTimeInMillis(mTime);
@@ -74,7 +74,7 @@ public class ScheduleFragment extends DialogFragment {
 		TextView endTime = (TextView)v.findViewById(R.id.end_schedule);
 			endTime.setText("Stop");
 	
-		//on timechange events
+	//on timechange events
 		//Start time listener
 		timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener(){
 			
@@ -91,7 +91,7 @@ public class ScheduleFragment extends DialogFragment {
 				
 				//save to shared prefs
 				Activity myActivity = (Activity)(view.getContext());		
-				SaveSchedulePrefs.saveSchedule(t2, 1, myActivity);
+				SaveSchedulePrefs.saveSchedule(t2, 1, 1, myActivity);
 				//update args to preserve value on rotation
 				getArguments().putSerializable(EXTRA_TIME, t2);
 			}
@@ -112,7 +112,7 @@ public class ScheduleFragment extends DialogFragment {
 				
 				//save to shared prefs
 				Activity myActivity = (Activity)(view.getContext());		
-				SaveSchedulePrefs.saveSchedule(t2, 2, myActivity);
+				SaveSchedulePrefs.saveSchedule(t2, 2, 2, myActivity);
 				//update args to preserve value on rotation
 				getArguments().putSerializable(EXTRA_TIME2, t2);
 			}
@@ -130,9 +130,13 @@ public class ScheduleFragment extends DialogFragment {
 	public void onStop(){
 		//update service alarms
 		super.onStop();
-		ServiceController.setServiceAlarm(getActivity(), true);
+		//flag user enabled alarm
+		boolean userTouched = true;
+		SaveSchedulePrefs.saveScheduleUserTouched(userTouched, 4, getActivity());
+		//turn on
+		ServiceController.setServiceAlarm(getActivity(), true, userTouched);
 		//turn off
-		ServiceController.setServiceAlarm(getActivity(), false);
+		ServiceController.setServiceAlarm(getActivity(), false, userTouched);
 	}
 	
 
