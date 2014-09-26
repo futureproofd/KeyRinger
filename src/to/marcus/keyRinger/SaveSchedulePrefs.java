@@ -16,6 +16,7 @@ public class SaveSchedulePrefs {
 	private static String ALARM_STOP_ID = "AlarmStopId";
 //	private static final String TAG = "SaveSchedulePrefs";
 	
+	//save set time (1 for start, 2 stop)
 	public static boolean saveSchedule(Long schedule, int option, int requestCode, Context context){
 		SharedPreferences settings = context.getSharedPreferences(SCHEDULE, 0);
 		Editor editor = settings.edit();
@@ -34,6 +35,8 @@ public class SaveSchedulePrefs {
 		}
 	}
 	
+	//toggle user set alarm 
+	//dont really need this anymore....
 	public static boolean saveScheduleUserTouched(Boolean userTouched, int option, Context context){
 		SharedPreferences settings = context.getSharedPreferences(SCHEDULE, 0);
 		Editor editor = settings.edit();
@@ -46,7 +49,7 @@ public class SaveSchedulePrefs {
 		//get shared prefs value or default, future time if no schedule has been set
 		Long offset = savedSchedule.getLong(TIMECURRENT, 0);
 		offset = offset + (24*60*60*1000);
-		//Long offset2 = offset + 86400000;
+		
 		//Log.d(TAG," default set time: " + offset + " " + offset2);
 		
 		if (option == 1){

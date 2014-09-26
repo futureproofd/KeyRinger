@@ -20,46 +20,89 @@ public class ServiceController {
 		Long mTime = SaveSchedulePrefs.getSchedule(context, 1);
 		Long mTime2 = SaveSchedulePrefs.getSchedule(context, 2);
 		Long mCurrentTime = SaveSchedulePrefs.getSchedule(context, 3);
-		boolean mUserTouched = SaveSchedulePrefs.getScheduleUserTouched(context);
+		//boolean mUserTouched = SaveSchedulePrefs.getScheduleUserTouched(context);
 		
-		//version logic here
+		//version 4.4
 		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT){
 			Log.d(TAG, "entering KitKat logic");
-			if (!mUserTouched){
-				//cancel current alarm
+			//repeating alarm
+			if (!userControlled){
 				Intent i = new Intent(context, RingerService.class);
-				PendingIntent pi = PendingIntent.getService(context, SaveSchedulePrefs.getStartReqCode(context), i, PendingIntent.FLAG_UPDATE_CURRENT);
-				alarmManager.cancel(pi);
-				//set future time +24h
-				mTime = mTime + (24*60*60*1000);
-				mTime2 = mTime2 + (24*60*60*1000);
-				SaveSchedulePrefs.saveSchedule(mTime, 1, 1, context.getApplicationContext());
-				SaveSchedulePrefs.saveSchedule(mTime2, 2, 2, context.getApplicationContext());
-				//set new alarm
-				alarmManager.setExact(AlarmManager.RTC_WAKEUP, mTime, pi);
-			/*
-				add 24 hrs to shared prefs
-				alarmset = true
+				if(isOn){
+					i.setAction("start");
+					//cancel current alarm
+					PendingIntent piStart = PendingIntent.getService(context, SaveSchedulePrefs.getStartReqCode(context), i, PendingIntent.FLAG_UPDATE_CURRENT);
+					Log.d(TAG, "cancelling old START non-user pending intent with reqCode: " + SaveSchedulePrefs.getStartReqCode(context));
+					alarmManager.cancel(piStart);
+					if (mTime > mCurrentTime){
+						Log.d(TAG, "non-user kitkat Start alarm loop " + mTime);
+						alarmManager.setExact(AlarmManager.RTC_WAKEUP, mTime, piStart);
+					}else{
+						Log.d(TAG, "non-user kitkat future Start alarm loop "  + mTime);
+						alarmManager.setExact(AlarmManager.RTC_WAKEUP, mTime + (24*60*60*1000), piStart);
+					}
+					SaveSchedulePrefs.saveSchedule(mTime + (24*60*60*1000), 1, 1, context.getApplicationContext());
+				}else{
+					i.setAction("stop");
+					//cancel current alarm
+					PendingIntent piStop = PendingIntent.getService(context, SaveSchedulePrefs.getStopReqCode(context), i, PendingIntent.FLAG_UPDATE_CURRENT);
+					Log.d(TAG, "cancelling old STOP non-user pending intent w reqCode: "+ SaveSchedulePrefs.getStopReqCode(context));
+					alarmManager.cancel(piStop);
+					if (mTime2 > mCurrentTime){
+						Log.d(TAG, "non-user kitkat Stop alarm loop " + mTime2);
+						alarmManager.setExact(AlarmManager.RTC_WAKEUP, mTime2, piStop);
+					}else{
+						Log.d(TAG, "non-user kitkat future Stop alarm loop "  + mTime2);
+						alarmManager.setExact(AlarmManager.RTC_WAKEUP, mTime2 + (24*60*60*1000), piStop);
+					}		
+					SaveSchedulePrefs.saveSchedule(mTime2 + (24*60*60*1000), 2, 2, context.getApplicationContext());
+				}
 				
-
-			 */
-		//if user touched
+		//if user set alarm
 			}else{
+				Intent i = new Intent(context, RingerService.class);
 				//cancel current alarm
-				//userSet = true
+				if(isOn){
+					i.setAction("start");
+					PendingIntent piStart = PendingIntent.getService(context, SaveSchedulePrefs.getStartReqCode(context), i, PendingIntent.FLAG_UPDATE_CURRENT);
+					alarmManager.cancel(piStart);
+					Log.d(TAG, "cancelling user set pending intent for Start w reqCode: " + SaveSchedulePrefs.getStartReqCode(context));
+					if (mTime > mCurrentTime){
+						Log.d(TAG, "user changed kitkat Start alarm loop " + piStart);
+						alarmManager.setExact(AlarmManager.RTC_WAKEUP, mTime, piStart);
+					}else{
+						Log.d(TAG, "user changed kitkat future Start alarm loop "  + piStart);
+						alarmManager.setExact(AlarmManager.RTC_WAKEUP, mTime + (24*60*60*1000), piStart);
+					}
+				}else{
+					i.setAction("stop");
+					PendingIntent piStop = PendingIntent.getService(context, SaveSchedulePrefs.getStopReqCode(context), i, PendingIntent.FLAG_UPDATE_CURRENT);
+					alarmManager.cancel(piStop);
+					Log.d(TAG, "cancelling user set pending intent for Stop w reqCode: " + SaveSchedulePrefs.getStopReqCode(context));
+					if (mTime2 > mCurrentTime){
+						Log.d(TAG, "user changed kitkat Stop alarm loop " + piStop);
+						alarmManager.setExact(AlarmManager.RTC_WAKEUP, mTime2, piStop);
+					}else{
+						Log.d(TAG, "user changed kitkat future Stop alarm loop "  + piStop);
+						alarmManager.setExact(AlarmManager.RTC_WAKEUP, mTime2 + (24*60*60*1000), piStop);
+					}
+				}
+				//reset user touched 
+			//	mUserTouched = false;
+			//	SaveSchedulePrefs.saveScheduleUserTouched(mUserTouched, 4, context);
 			}
-	// pre KitKat
+	//pre-KitKat
 		}else{
 			//start
 			if(isOn){
 				Intent i = new Intent(context, RingerService.class);
 				i.setAction("start");
 				PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
-					if (mTime > mCurrentTime){
-						alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mTime, AlarmManager.INTERVAL_DAY, pi);
-					}else{
-						alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mTime + (24*60*60*1000), AlarmManager.INTERVAL_DAY, pi);
-					}
+				if (mTime > mCurrentTime){
+					alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mTime, AlarmManager.INTERVAL_DAY, pi);
+				}else{
+					alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, mTime + (24*60*60*1000), AlarmManager.INTERVAL_DAY, pi);
+				}
 			//stop
 			}else{
 				Intent i2 = new Intent(context, RingerService.class);

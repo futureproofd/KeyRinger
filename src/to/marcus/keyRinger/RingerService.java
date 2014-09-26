@@ -1,5 +1,7 @@
 package to.marcus.keyRinger;
 
+import java.util.Calendar;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +20,7 @@ public class RingerService extends Service {
 	private Contact mContact;
 	private String number;
 	private Context mContext;
+	private Long mCurrentTime;
 	
 
 	@Override
@@ -75,27 +78,41 @@ public class RingerService extends Service {
 	//register listener
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
-		
-		//put version logic here
-		/* if kitcat, 
-		 * listen mPhoneStateListener
-		 * userTouched = false;   //reset our user touch to use continuous 24hr looping
-		 * ServiceController.setServiceAlarm(this);
-		 * 
-		 * 
-		 * */
 		boolean isStop = (intent.getAction().equals("stop")) ? true : false;
-		//stop
-		if (isStop){
-			//stopSelfResult(startId);
-			mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
-			Log.d(TAG, " stopping service from intent action: " + startId + " " + intent + " " + isStop);
-			return START_STICKY;	
-		//start
+		//create calendar to get time elements
+		Calendar calendar = Calendar.getInstance();
+		//get current time to help adjust scheduling times
+		mCurrentTime = (long)calendar.getTimeInMillis();
+		Log.d(TAG, "current time update: " + mCurrentTime);
+		SaveSchedulePrefs.saveSchedule(mCurrentTime, 3, 1, getApplicationContext());
+		ServiceController.setServiceAlarm(this, false, false);
+		
+	//KitKat
+		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT){
+			if(isStop){
+				Log.d(TAG, " stopping service 4.4: " + startId + " " + intent);
+				mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+				return START_STICKY;
+			}else{
+				Log.d(TAG, " starting service 4.4: " + startId + " " + intent);
+				mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+				ServiceController.setServiceAlarm(this, true, false);
+				return START_STICKY;
+			}
+	//pre-KitKat
 		}else{
-			mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-			Log.d(TAG, " starting service: " + startId + " " + intent + " " + isStop);
-			return START_STICKY;
+			//stop
+			if (isStop){
+				//stopSelfResult(startId);
+				mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+				Log.d(TAG, " stopping service from intent action: " + startId + " " + intent + " " + isStop);
+				return START_STICKY;	
+			//start
+			}else{
+				mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+				Log.d(TAG, " starting service: " + startId + " " + intent + " " + isStop);
+				return START_STICKY;
+			}
 		}
 	}
 	
