@@ -58,7 +58,6 @@ public class RingerService extends Service {
 									case 0:
 										myRingerManager.setRingerMode(2);
 									}
-									//removed default - see older version
 							}
 						}catch(Exception e){
 							Log.d(TAG, " exception: " + e + " " + number);
@@ -68,7 +67,7 @@ public class RingerService extends Service {
 	            	   //revert to silence
 	                   if (state == 0){
 							myRingerManager.setRingerMode(0);
-						};
+	                   };
 	               }
 	           }   
 	       };
@@ -85,18 +84,18 @@ public class RingerService extends Service {
 		mCurrentTime = (long)calendar.getTimeInMillis();
 		Log.d(TAG, "current time update: " + mCurrentTime);
 		SaveSchedulePrefs.saveSchedule(mCurrentTime, 3, 1, getApplicationContext());
-		ServiceController.setServiceAlarm(this, false, false);
 		
 	//KitKat
 		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT){
 			if(isStop){
 				Log.d(TAG, " stopping service 4.4: " + startId + " " + intent);
 				mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_NONE);
+				ServiceController.setServiceAlarm(this, false, false, 2);
 				return START_STICKY;
 			}else{
 				Log.d(TAG, " starting service 4.4: " + startId + " " + intent);
 				mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-				ServiceController.setServiceAlarm(this, true, false);
+				ServiceController.setServiceAlarm(this, true, false, 1);
 				return START_STICKY;
 			}
 	//pre-KitKat

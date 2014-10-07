@@ -54,8 +54,6 @@ public class ContactListFragment extends ListFragment {
 		Calendar calendar = Calendar.getInstance();
 		mCurrentTime = (long)calendar.getTimeInMillis();
 		SaveSchedulePrefs.saveSchedule(mCurrentTime, 3, 1, getActivity());
-		//Log.d(TAG, "intial current time: " + mCurrentTime );
-		
 		setListAdapter(adapter);		
 	}
 
@@ -71,13 +69,6 @@ public class ContactListFragment extends ListFragment {
 	public void onPause(){
 		super.onPause();
 		ContactStorage.get(getActivity()).saveContactsToFile();
-	}
-	
-	//add an action bar
-	@Override 
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.main, menu);
 	}
 	
 	//add context menu (delete)
@@ -121,7 +112,6 @@ public class ContactListFragment extends ListFragment {
 				c.setTimeInMillis(millidate);
 				//open dialog
 				ScheduleFragment dialog = ScheduleFragment.newInstance(millidate, millidate2, currentDate);
-				//ScheduleFragment dialog2 = ScheduleFragment.newInstance(millidate);
 				dialog.show(fm, DIALOG_DATE);
 			case android.R.id.home:
 				if(NavUtils.getParentActivityName(getActivity()) != null){

@@ -34,23 +34,12 @@ public class SaveSchedulePrefs {
 			return editor.commit();
 		}
 	}
-	
-	//toggle user set alarm 
-	//dont really need this anymore....
-	public static boolean saveScheduleUserTouched(Boolean userTouched, int option, Context context){
-		SharedPreferences settings = context.getSharedPreferences(SCHEDULE, 0);
-		Editor editor = settings.edit();
-			editor.putBoolean(USER_TOUCHED, userTouched);
-			return editor.commit();
-		}
 
 	public static Long getSchedule(Context context, int option){
 		SharedPreferences savedSchedule = context.getSharedPreferences(SCHEDULE, 0);
 		//get shared prefs value or default, future time if no schedule has been set
 		Long offset = savedSchedule.getLong(TIMECURRENT, 0);
 		offset = offset + (24*60*60*1000);
-		
-		//Log.d(TAG," default set time: " + offset + " " + offset2);
 		
 		if (option == 1){
 			return savedSchedule.getLong(TIME, offset);
@@ -64,16 +53,5 @@ public class SaveSchedulePrefs {
 	public static boolean getScheduleUserTouched(Context context){
 		SharedPreferences savedSchedule = context.getSharedPreferences(SCHEDULE, 0);
 			return savedSchedule.getBoolean(USER_TOUCHED, false);
-		
-	}
-	
-	public static int getStartReqCode(Context context){
-		SharedPreferences savedSchedule = context.getSharedPreferences(SCHEDULE, 0);
-			return savedSchedule.getInt(ALARM_START_ID, 0);
-	}
-	
-	public static int getStopReqCode(Context context){
-		SharedPreferences savedSchedule = context.getSharedPreferences(SCHEDULE, 0);
-			return savedSchedule.getInt(ALARM_STOP_ID, 0);
 	}
 }

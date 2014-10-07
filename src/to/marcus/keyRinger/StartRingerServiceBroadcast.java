@@ -18,8 +18,8 @@ public class StartRingerServiceBroadcast extends BroadcastReceiver {
 		SaveSchedulePrefs.saveSchedule(mCurrentTime, 3, 1, context.getApplicationContext());
 		//start and stop service
 		Log.d(TAG, "Setting start alarm");
-		ServiceController.setServiceAlarm(context.getApplicationContext(), true, false);
+		ServiceController.setServiceAlarm(context.getApplicationContext(), true, false, 1);
 		Log.d(TAG, "Setting stop alarm");
-		ServiceController.setServiceAlarm(context.getApplicationContext(), false, false);
+		ServiceController.setServiceAlarm(context.getApplicationContext(), false, false, 2);
 	}
 }

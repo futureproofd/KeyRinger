@@ -130,14 +130,10 @@ public class ScheduleFragment extends DialogFragment {
 	public void onStop(){
 		//update service alarms
 		super.onStop();
-		//flag user enabled alarm
-		
-	//	boolean userTouched = true;
-	//	SaveSchedulePrefs.saveScheduleUserTouched(true, 4, getActivity());
 		//turn on
-		ServiceController.setServiceAlarm(getActivity(), true, true);
+		ServiceController.setServiceAlarm(getActivity(), true, true, 1);
 		//turn off
-		ServiceController.setServiceAlarm(getActivity(), false, true);
+		ServiceController.setServiceAlarm(getActivity(), false, true, 2);
 	}
 	
 
