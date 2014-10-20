@@ -77,6 +77,12 @@ public class RingerService extends Service {
 	//register listener
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
+		if (intent == null || intent.getAction() == null){
+			Log.d(TAG, "resending intent because it was null");
+			return START_REDELIVER_INTENT;
+			
+		}
+		
 		boolean isStop = (intent.getAction().equals("stop")) ? true : false;
 		//create calendar to get time elements
 		Calendar calendar = Calendar.getInstance();
